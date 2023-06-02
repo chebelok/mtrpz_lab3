@@ -1,16 +1,25 @@
-FROM golang:latest
+# build stage
+FROM golang:1.20.4-alpine3.17 AS builder
  
 WORKDIR /app
 
-COPY go.mod .
-COPY go.sum .
+COPY go.mod go.sum ./
 
 RUN go mod download
 
-COPY . .
+COPY . /app
 
 RUN go build -o build/fizzbuzz
 
+# run stage
+FROM scratch
+
+WORKDIR /app
+
+COPY --from=builder /app/build/fizzbuzz /
+COPY --from=builder /app/templates/index.html /templates/
+
 EXPOSE 8080
 
-CMD ["./build/fizzbuzz", "serve"]
+
+CMD ["./fizzbuzz", "serve"]
