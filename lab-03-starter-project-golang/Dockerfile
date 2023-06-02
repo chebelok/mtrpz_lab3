@@ -12,7 +12,7 @@ COPY . /app
 RUN go build -o build/fizzbuzz
 
 # run stage
-FROM scratch
+FROM gcr.io/distroless/base-debian11
 
 WORKDIR /app
 
